@@ -1,0 +1,156 @@
+.footer {
+  background: #030b16;
+  position: relative;
+  padding-bottom: 32px;
+}
+
+.divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(14, 165, 233, 0.2), transparent);
+  margin-bottom: 48px;
+}
+
+.inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 48px;
+  margin-bottom: 48px;
+  flex-wrap: wrap;
+}
+
+.brand {
+  max-width: 280px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.logoIcon {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #0ea5e9, #06b6d4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  font-weight: 900;
+  color: white;
+}
+
+.logoText {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #f0f6ff;
+  line-height: 1.3;
+  display: flex;
+  flex-direction: column;
+}
+
+.logoText em {
+  font-style: normal;
+  font-size: 0.7rem;
+  font-weight: 400;
+  color: #475569;
+  letter-spacing: 0.04em;
+}
+
+.tagline {
+  font-size: 0.825rem;
+  color: #475569;
+  line-height: 1.6;
+}
+
+.relatedSites {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.relatedSites h4 {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 4px;
+}
+
+.relatedSites a {
+  font-size: 0.825rem;
+  color: #475569;
+  transition: color 0.2s;
+}
+
+.relatedSites a:hover {
+  color: #94a3b8;
+}
+
+.links {
+  display: flex;
+  gap: 64px;
+}
+
+.linkGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.linkGroup h4 {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 4px;
+}
+
+.linkGroup a {
+  font-size: 0.85rem;
+  color: #475569;
+  transition: color 0.2s;
+}
+
+.linkGroup a:hover {
+  color: #94a3b8;
+}
+
+.bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+  font-size: 0.78rem;
+  color: #334155;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.location {
+  font-size: 0.78rem;
+  color: #334155;
+}
+
+@media (max-width: 640px) {
+  .inner {
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  .links {
+    gap: 32px;
+  }
+
+  .bottom {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
