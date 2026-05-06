@@ -1,10 +1,15 @@
 import { useState } from 'react';
 import styles from './Contact.module.css';
+import type { SiteContent } from '../content/siteContent';
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-export default function Contact() {
+type ContactProps = {
+  content: SiteContent['contact'];
+};
+
+export default function Contact({ content }: ContactProps) {
   const [form, setForm] = useState({ name: '', company: '', email: '', message: '' });
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -27,10 +32,10 @@ export default function Contact() {
         },
         body: JSON.stringify(form),
       });
-      if (!res.ok) throw new Error('发送失败，请稍后重试。');
+      if (!res.ok) throw new Error(content.form.errorMessage);
       setSubmitted(true);
     } catch {
-      setError('发送失败，请稍后重试。');
+      setError(content.form.errorMessage);
     } finally {
       setLoading(false);
     }
@@ -41,52 +46,45 @@ export default function Contact() {
       <div className="container">
         <div className={styles.grid}>
           <div className={styles.info}>
-            <span className="section-label">联系我们</span>
-            <h2 className="section-title">开启数字化合作</h2>
+            <span className="section-label">{content.label}</span>
+            <h2 className="section-title">{content.title}</h2>
             <p className={styles.body}>
-              无论您是希望建立全新数字平台，还是对现有系统进行 AI 升级，我们的团队随时准备为您提供专业咨询。
+              {content.body}
             </p>
 
             <div className={styles.contactItems}>
               <div className={styles.contactItem}>
                 <div className={styles.contactIcon}>📍</div>
                 <div>
-                  <div className={styles.contactLabel}>办公地址</div>
-                  <div className={styles.contactValue}>金边，柬埔寨</div>
+                  <div className={styles.contactLabel}>{content.addressLabel}</div>
+                  <div className={styles.contactValue}>{content.addressValue}</div>
                 </div>
               </div>
               <div className={styles.contactItem}>
                 <div className={styles.contactIcon}>📧</div>
                 <div>
-                  <div className={styles.contactLabel}>电子邮件</div>
-                  <a href="mailto:magneto.zhao@gmail.com" className={styles.contactLink}>
-                    magneto.zhao@gmail.com
+                  <div className={styles.contactLabel}>{content.emailLabel}</div>
+                  <a href={`mailto:${content.email}`} className={styles.contactLink}>
+                    {content.email}
                   </a>
                 </div>
               </div>
             </div>
 
             <div className={styles.qrSection}>
-              <div className={styles.qrLabel}>💬 即时通讯 — 扫码添加</div>
+              <div className={styles.qrLabel}>{content.qrLabel}</div>
               <div className={styles.qrGrid}>
-                <div className={styles.qrCard}>
-                  <div className={styles.qrBadge} data-type="telegram">Telegram</div>
-                  <img
-                    src="/image.png"
-                    alt="Telegram QR Code"
-                    className={styles.qrImage}
-                  />
-                  <div className={styles.qrHandle}>@SHENGWEIZHAO</div>
-                </div>
-                <div className={styles.qrCard}>
-                  <div className={styles.qrBadge} data-type="wechat">WeChat</div>
-                  <img
-                    src="/Weixin_Image_20260221115742_1096_56.jpg"
-                    alt="WeChat QR Code"
-                    className={styles.qrImage}
-                  />
-                  <div className={styles.qrHandle}>Shengwei</div>
-                </div>
+                {content.qrCards.map((card) => (
+                  <div key={card.type} className={styles.qrCard}>
+                    <div className={styles.qrBadge} data-type={card.type}>{card.type}</div>
+                    <img
+                      src={card.imageSrc}
+                      alt={card.alt}
+                      className={styles.qrImage}
+                    />
+                    <div className={styles.qrHandle}>{card.handle}</div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
@@ -95,50 +93,50 @@ export default function Contact() {
             {submitted ? (
               <div className={styles.success}>
                 <div className={styles.successIcon}>✓</div>
-                <h3>消息已发送！</h3>
-                <p>感谢您的联系，我们将在 24 小时内回复您。</p>
+                <h3>{content.form.successTitle}</h3>
+                <p>{content.form.successBody}</p>
               </div>
             ) : (
               <form className={styles.form} onSubmit={handleSubmit}>
                 <div className={styles.row}>
                   <div className={styles.field}>
-                    <label>姓名 *</label>
+                    <label>{content.form.nameLabel}</label>
                     <input
                       name="name"
                       type="text"
-                      placeholder="您的姓名"
+                      placeholder={content.form.namePlaceholder}
                       value={form.name}
                       onChange={handleChange}
                       required
                     />
                   </div>
                   <div className={styles.field}>
-                    <label>公司名称</label>
+                    <label>{content.form.companyLabel}</label>
                     <input
                       name="company"
                       type="text"
-                      placeholder="您的公司（选填）"
+                      placeholder={content.form.companyPlaceholder}
                       value={form.company}
                       onChange={handleChange}
                     />
                   </div>
                 </div>
                 <div className={styles.field}>
-                  <label>电子邮件 *</label>
+                  <label>{content.form.emailLabel}</label>
                   <input
                     name="email"
                     type="email"
-                    placeholder="your@email.com"
+                    placeholder={content.form.emailPlaceholder}
                     value={form.email}
                     onChange={handleChange}
                     required
                   />
                 </div>
                 <div className={styles.field}>
-                  <label>项目需求</label>
+                  <label>{content.form.messageLabel}</label>
                   <textarea
                     name="message"
-                    placeholder="请简要描述您的项目需求或问题..."
+                    placeholder={content.form.messagePlaceholder}
                     value={form.message}
                     onChange={handleChange}
                     rows={5}
@@ -146,7 +144,7 @@ export default function Contact() {
                 </div>
                 {error && <p className={styles.errorMsg}>{error}</p>}
                 <button type="submit" className={styles.submitBtn} disabled={loading}>
-                  {loading ? '发送中...' : '发送消息 →'}
+                  {loading ? content.form.loadingLabel : content.form.submitLabel}
                 </button>
               </form>
             )}

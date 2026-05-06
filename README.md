@@ -72,6 +72,62 @@ VITE_SUPABASE_ANON_KEY=
 
 请在本地创建对应的环境变量文件，并通过安全方式管理生产环境配置，不要将密钥直接提交到仓库。
 
+## 后台管理
+
+后台入口：
+
+```text
+/admin
+```
+
+后台使用 Supabase Auth 登录，并通过 `site_content` 表保存官网内容。管理员用户名为：
+
+```text
+admin123
+```
+
+该用户名会映射到管理员邮箱：
+
+```text
+magneto.zhao@gmail.com
+```
+
+请在 Supabase Auth 中创建这个用户并设置密码。密码不要写入代码或提交到仓库。
+
+首次启用后台前，需要执行数据库迁移：
+
+```bash
+npx supabase login
+npx supabase link --project-ref lyrywvpacqydpkhvnjcv
+npx supabase db push
+```
+
+对应迁移文件：
+
+```text
+supabase/migrations/20260506000000_site_content.sql
+```
+
+迁移会创建 `public.site_content` 表，并配置 Row Level Security：
+
+- 所有人可以读取前台内容
+- 只有 `magneto.zhao@gmail.com` 可以新增、修改、删除内容
+- 前台会优先读取数据库内容，读取失败时使用代码里的默认内容
+
+Vercel 生产环境还需要配置：
+
+```text
+VITE_SUPABASE_URL
+VITE_SUPABASE_ANON_KEY
+```
+
+可以通过 Vercel Dashboard 添加，也可以使用：
+
+```bash
+vercel env add VITE_SUPABASE_URL production
+vercel env add VITE_SUPABASE_ANON_KEY production
+```
+
 ## 目录结构
 
 ```text
@@ -83,9 +139,11 @@ VITE_SUPABASE_ANON_KEY=
 │   ├── main.tsx               # 应用入口
 │   └── index.css              # 全局样式
 ├── supabase/
-│   └── functions/
-│       └── send-contact/      # 联系表单服务端函数
+│   ├── functions/
+│   │   └── send-contact/      # 联系表单服务端函数
+│   └── migrations/            # 数据库迁移
 ├── package.json
+├── vercel.json                # Vercel 路由配置
 └── vite.config.ts
 ```
 

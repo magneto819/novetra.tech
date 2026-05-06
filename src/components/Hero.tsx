@@ -1,6 +1,11 @@
 import styles from './Hero.module.css';
+import type { SiteContent } from '../content/siteContent';
 
-export default function Hero() {
+type HeroProps = {
+  content: SiteContent['hero'];
+};
+
+export default function Hero({ content }: HeroProps) {
   return (
     <section className={styles.hero}>
       <div className={styles.grid}></div>
@@ -10,33 +15,32 @@ export default function Hero() {
       <div className={`container ${styles.content}`}>
         <div className={styles.badge}>
           <span className={styles.dot}></span>
-          立足东南亚 · 驱动数字未来
+          {content.badge}
         </div>
 
         <h1 className={styles.headline}>
-          <span className={styles.lineTop}>新纬科技</span>
+          <span className={styles.lineTop}>{content.titleTop}</span>
           <span className={styles.lineSub}>
-            Novetra <span className={styles.accent}>Tech</span>
+            {content.titleMain} <span className={styles.accent}>{content.titleAccent}</span>
           </span>
         </h1>
 
         <p className={styles.tagline}>
-          专注于网站开发、移动应用、AI 智能系统与数字内容，
-          <br className={styles.br} />
-          助力企业实现从传统到智能的全面数字化升级。
+          {content.taglineLines.map((line, index) => (
+            <span key={line}>
+              {line}
+              {index < content.taglineLines.length - 1 && <br className={styles.br} />}
+            </span>
+          ))}
         </p>
 
         <div className={styles.actions}>
-          <a href="#services" className={styles.btnPrimary}>探索业务领域</a>
-          <a href="#contact" className={styles.btnOutline}>立即咨询</a>
+          <a href={content.primaryCta.href} className={styles.btnPrimary}>{content.primaryCta.label}</a>
+          <a href={content.secondaryCta.href} className={styles.btnOutline}>{content.secondaryCta.label}</a>
         </div>
 
         <div className={styles.stats}>
-          {[
-            { value: '10+', label: '核心业务领域' },
-            { value: '东南亚', label: '服务市场' },
-            { value: 'AI', label: '智能驱动' },
-          ].map((stat) => (
+          {content.stats.map((stat) => (
             <div key={stat.label} className={styles.statItem}>
               <span className={styles.statValue}>{stat.value}</span>
               <span className={styles.statLabel}>{stat.label}</span>
@@ -47,7 +51,7 @@ export default function Hero() {
 
       <div className={styles.scrollHint}>
         <span></span>
-        向下滚动
+        {content.scrollHint}
       </div>
     </section>
   );

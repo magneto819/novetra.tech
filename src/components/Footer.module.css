@@ -20,7 +20,7 @@
 }
 
 .brand {
-  max-width: 280px;
+  max-width: 560px;
 }
 
 .logo {
@@ -67,29 +67,99 @@
 }
 
 .relatedSites {
-  margin-top: 20px;
+  margin-top: 24px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 16px;
+  padding: 18px;
+  border: 1px solid rgba(14, 165, 233, 0.2);
+  border-radius: 20px;
+  background:
+    linear-gradient(180deg, rgba(14, 165, 233, 0.12), rgba(3, 11, 22, 0.2)),
+    rgba(255, 255, 255, 0.02);
+  box-shadow: 0 18px 40px rgba(2, 8, 23, 0.28);
+}
+
+.relatedHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .relatedSites h4 {
-  font-size: 0.75rem;
+  font-size: 0.95rem;
   font-weight: 700;
-  color: #64748b;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  margin-bottom: 4px;
+  color: #e0f2fe;
+  letter-spacing: 0.04em;
+  margin: 0;
 }
 
-.relatedSites a {
-  font-size: 0.825rem;
-  color: #475569;
-  transition: color 0.2s;
+.relatedHeader p {
+  margin: 0;
+  font-size: 0.82rem;
+  line-height: 1.6;
+  color: #7dd3fc;
 }
 
-.relatedSites a:hover {
-  color: #94a3b8;
+.relatedGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.relatedCard {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 104px;
+  padding: 14px 42px 14px 14px;
+  border-radius: 16px;
+  border: 1px solid rgba(125, 211, 252, 0.16);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(14, 165, 233, 0.04)),
+    rgba(2, 6, 23, 0.65);
+  color: #e2e8f0;
+  transition:
+    transform 0.22s ease,
+    border-color 0.22s ease,
+    box-shadow 0.22s ease,
+    background 0.22s ease;
+}
+
+.relatedCard:hover {
+  transform: translateY(-3px);
+  border-color: rgba(125, 211, 252, 0.34);
+  box-shadow: 0 14px 30px rgba(14, 165, 233, 0.16);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(14, 165, 233, 0.09)),
+    rgba(2, 6, 23, 0.82);
+}
+
+.relatedTag {
+  align-self: flex-start;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #38bdf8;
+  background: rgba(14, 165, 233, 0.12);
+}
+
+.relatedTitle {
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1.5;
+  color: #f8fafc;
+}
+
+.relatedArrow {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  font-size: 1rem;
+  color: #7dd3fc;
 }
 
 .links {
@@ -145,8 +215,16 @@
     gap: 32px;
   }
 
+  .brand {
+    max-width: none;
+  }
+
   .links {
     gap: 32px;
+  }
+
+  .relatedGrid {
+    grid-template-columns: 1fr;
   }
 
   .bottom {
