@@ -183,6 +183,128 @@
   line-height: 1.7;
 }
 
+.formArea {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.field span {
+  color: #cbd5e1;
+  font-size: 0.84rem;
+  font-weight: 800;
+}
+
+.field input,
+.field textarea {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 8px;
+  background: rgba(2, 6, 23, 0.72);
+  color: #f8fafc;
+  font: inherit;
+  line-height: 1.6;
+}
+
+.field input[type='color'] {
+  min-height: 46px;
+  padding: 5px;
+}
+
+.field textarea {
+  resize: vertical;
+}
+
+.compactGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.listBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid rgba(125, 211, 252, 0.12);
+  border-radius: 8px;
+  background: rgba(15, 23, 42, 0.38);
+}
+
+.listHeader,
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.listHeader h3,
+.cardHeader h4 {
+  margin: 0;
+  color: #f8fafc;
+  letter-spacing: 0;
+}
+
+.listHeader h3 {
+  font-size: 1rem;
+}
+
+.cardHeader h4 {
+  font-size: 0.92rem;
+}
+
+.cardList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.adminCard,
+.inlineItem {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  border-radius: 8px;
+  background: rgba(2, 6, 23, 0.46);
+}
+
+.inlineItem {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+}
+
+.dangerButton {
+  min-height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 12px;
+  border: 1px solid rgba(248, 113, 113, 0.28);
+  border-radius: 8px;
+  background: rgba(127, 29, 29, 0.32);
+  color: #fecaca;
+  font-weight: 800;
+  transition: border-color 0.18s ease, background 0.18s ease, transform 0.18s ease;
+}
+
+.dangerButton:hover {
+  transform: translateY(-1px);
+  border-color: rgba(248, 113, 113, 0.5);
+  background: rgba(127, 29, 29, 0.48);
+}
+
 .helpBar {
   display: flex;
   align-items: center;
@@ -281,6 +403,11 @@
 
   .editor {
     min-height: 460px;
+  }
+
+  .compactGrid,
+  .inlineItem {
+    grid-template-columns: 1fr;
   }
 }
 

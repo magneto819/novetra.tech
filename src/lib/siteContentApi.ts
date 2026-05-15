@@ -16,6 +16,11 @@ export type AdminSession = {
   email: string;
 };
 
+export type SaveSiteContentResult = {
+  content: SiteContent;
+  session: AdminSession;
+};
+
 type SupabaseContentRow = {
   data: unknown;
 };
@@ -30,6 +35,8 @@ type SupabaseAuthResponse = {
   error_description?: string;
   msg?: string;
 };
+
+const TOKEN_REFRESH_BUFFER_SECONDS = 60;
 
 export function hasSupabaseConfig() {
   return Boolean(SUPABASE_URL && SUPABASE_ANON_KEY);
@@ -95,30 +102,66 @@ export async function signInAdmin(email: string, password: string): Promise<Admi
   return session;
 }
 
-export async function saveSiteContent(content: SiteContent, session: AdminSession): Promise<SiteContent> {
+export async function refreshAdminSession(session: AdminSession): Promise<AdminSession> {
   requireSupabaseConfig();
 
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/site_content`, {
+  const res = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=refresh_token`, {
     method: 'POST',
     headers: {
       apikey: SUPABASE_ANON_KEY,
-      Authorization: `Bearer ${session.accessToken}`,
       'Content-Type': 'application/json',
-      Prefer: 'resolution=merge-duplicates,return=representation',
     },
-    body: JSON.stringify({
-      id: CONTENT_ROW_ID,
-      data: content,
-    }),
+    body: JSON.stringify({ refresh_token: session.refreshToken }),
   });
 
-  if (!res.ok) {
-    const message = await res.text();
-    throw new Error(message || '保存失败，请稍后重试。');
+  const data = (await res.json()) as SupabaseAuthResponse;
+
+  if (!res.ok || !data.access_token || !data.refresh_token) {
+    throw new Error(data.error_description || data.msg || '登录已过期，请重新登录。');
   }
 
-  const rows = (await res.json()) as SupabaseContentRow[];
-  return mergeSiteContent(rows[0]?.data);
+  const userEmail = data.user?.email || session.email;
+
+  if (userEmail.toLowerCase() !== ADMIN_EMAIL) {
+    throw new Error('当前账号没有后台管理权限。');
+  }
+
+  const nextSession: AdminSession = {
+    accessToken: data.access_token,
+    refreshToken: data.refresh_token,
+    expiresAt: data.expires_at,
+    email: userEmail,
+  };
+
+  storeAdminSession(nextSession);
+  return nextSession;
+}
+
+export async function saveSiteContent(
+  content: SiteContent,
+  session: AdminSession,
+): Promise<SaveSiteContentResult> {
+  requireSupabaseConfig();
+
+  let activeSession = await ensureFreshSession(session);
+  let res = await upsertSiteContent(content, activeSession);
+  let responseText = await res.text();
+
+  if (!res.ok && isExpiredJwtResponse(responseText)) {
+    activeSession = await refreshAdminSession(activeSession);
+    res = await upsertSiteContent(content, activeSession);
+    responseText = await res.text();
+  }
+
+  if (!res.ok) {
+    throw new Error(responseText || '保存失败，请稍后重试。');
+  }
+
+  const rows = parseContentRows(responseText);
+  return {
+    content: mergeSiteContent(rows[0]?.data),
+    session: activeSession,
+  };
 }
 
 export function getStoredAdminSession(): AdminSession | null {
@@ -149,4 +192,47 @@ function requireSupabaseConfig() {
 
 function trimTrailingSlash(value: string | undefined) {
   return value?.replace(/\/+$/, '') || '';
+}
+
+async function ensureFreshSession(session: AdminSession) {
+  if (!session.expiresAt) {
+    return session;
+  }
+
+  const expiresIn = session.expiresAt - Math.floor(Date.now() / 1000);
+
+  if (expiresIn > TOKEN_REFRESH_BUFFER_SECONDS) {
+    return session;
+  }
+
+  return refreshAdminSession(session);
+}
+
+function upsertSiteContent(content: SiteContent, session: AdminSession) {
+  return fetch(`${SUPABASE_URL}/rest/v1/site_content`, {
+    method: 'POST',
+    headers: {
+      apikey: SUPABASE_ANON_KEY,
+      Authorization: `Bearer ${session.accessToken}`,
+      'Content-Type': 'application/json',
+      Prefer: 'resolution=merge-duplicates,return=representation',
+    },
+    body: JSON.stringify({
+      id: CONTENT_ROW_ID,
+      data: content,
+    }),
+  });
+}
+
+function parseContentRows(responseText: string) {
+  try {
+    return JSON.parse(responseText) as SupabaseContentRow[];
+  } catch {
+    return [];
+  }
+}
+
+function isExpiredJwtResponse(responseText: string) {
+  const normalized = responseText.toLowerCase();
+  return normalized.includes('jwt expired') || normalized.includes('pgrst303');
 }
